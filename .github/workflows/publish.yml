@@ -27,17 +27,36 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for container image
-        id: meta
+      - name: Extract metadata (tags, labels) for Alpine image
+        id: main
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
+      - name: Build and push Alpine image
         uses: docker/build-push-action@v2
         with:
           context: .
           file: Dockerfile.alpine
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.main.outputs.tags }}
+          labels: ${{ steps.main.outputs.labels }}
+
+      - name: Extract metadata (tags, labels) for Alpine image
+        id: initdb
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+            prefix=initdb-,onlatest=true
+
+      - name: Build and push Init DB Alpine image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.initdb.alpine
+          pull: true
+          push: true
+          tags: ${{ steps.initdb.outputs.tags }}
+          labels: ${{ steps.initdb.outputs.labels }}

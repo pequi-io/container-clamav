@@ -1,0 +1,7 @@
+FROM ghcr.io/surt-io/container-clamav:latest
+LABEL maintainer="surt.io"
+
+USER root
+RUN apk add --upgrade clamav-db
+
+USER clamav
