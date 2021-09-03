@@ -42,14 +42,14 @@ jobs:
           tags: ${{ steps.main.outputs.tags }}
           labels: ${{ steps.main.outputs.labels }}
 
-      - name: Extract metadata (tags, labels) for Alpine image
+      - name: Extract metadata (tags, labels) for Init DB Alpine image
         id: initdb
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,value={{tag}}-initdb
-            type=semver,value=latest-initdb
+            type=semver,pattern={{raw}}-initdb
+            type=semver,pattern=latest-initdb
 
       - name: Build and push Init DB Alpine image
         uses: docker/build-push-action@v2
