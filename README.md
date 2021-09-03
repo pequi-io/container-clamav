@@ -4,6 +4,8 @@ Containerized ClamAV open source antivirus.
 
 ## Usage
 
+You can available container images in [https://github.com/surt-io/container-clamav/pkgs/container/container-clamav](https://github.com/surt-io/container-clamav/pkgs/container/container-clamav)
+
 ### Docker
 
 ```bash
@@ -25,6 +27,14 @@ ClamAV is running as `daemon` where `clamd` is exposed using TCP on the port `33
 ## Base image
 
 `container-clamav` container image is based on [Alpine Linux](https://alpinelinux.org/about/).
+
+## Image with Initialized Databases
+
+After every new release of `container-clamav` image, we also create a second image with the tag suffix `-initdb` with initialized ClamAV virus database (.cvd) to avoid [issues with rate limiting](https://www.mail-archive.com/clamav-users@lists.clamav.net/msg50481.html) and/or longer initialization time (freshclam takes a few minutes to update the database signatures).
+
+```bash
+docker run -d -p 3310:3310 --name clamav-initdb ghcr.io/surt-io/container-clamav:latest-initdb
+```
 
 ## Environment Variables
 
