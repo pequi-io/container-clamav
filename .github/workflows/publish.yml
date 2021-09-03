@@ -47,9 +47,9 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=false
-            prefix=initdb-,onlatest=true
+          tags: |
+            type=tag,prefix={{tag}}-initdb
+            type=tag,prefix=latest-initdb
 
       - name: Build and push Init DB Alpine image
         uses: docker/build-push-action@v2
