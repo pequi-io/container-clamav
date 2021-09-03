@@ -50,6 +50,8 @@ jobs:
           tags: |
             type=semver,pattern={{raw}}-initdb
             type=semver,pattern=latest-initdb
+          flavor: |
+            latest=false
 
       - name: Build and push Init DB Alpine image
         uses: docker/build-push-action@v2
