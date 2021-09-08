@@ -1,0 +1,19 @@
+FROM alpine:3.14
+LABEL maintainer="surt.io"
+
+RUN apk add --no-cache clamav clamav-libunrar bash
+
+COPY conf /etc/clamav
+COPY scripts/*.sh /
+
+RUN chown -R clamav:clamav entrypoint.sh healthcheck.sh /etc/clamav && \
+    chmod u+x entrypoint.sh healthcheck.sh && \
+    mkdir -p /run/clamav && \
+    chown clamav:clamav /run/clamav && \
+    chmod 750 run/clamav
+
+EXPOSE 3310/tcp
+
+USER clamav
+
+CMD ["/bin/bash", "-c", "./entrypoint.sh"]

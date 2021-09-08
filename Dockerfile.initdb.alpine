@@ -1,0 +1,4 @@
+FROM ghcr.io/surt-io/container-clamav:latest
+LABEL maintainer="surt.io"
+
+RUN /usr/bin/freshclam

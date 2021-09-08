@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clamav-deployment
+  labels:
+    app: clamav
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clamav
+  template:
+    metadata:
+      labels:
+        app: clamav
+    spec:
+      containers:
+      - name: clamav
+        image: ghcr.io/surt-io/container-clamav:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3310
+          protocol: TCP
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+        readinessProbe:
+          exec:
+            command:
+            - "./healthcheck.sh"
+          initialDelaySeconds: 120
+          periodSeconds: 15
+          failureThreshold: 6
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - "./healthcheck.sh"
+          periodSeconds: 30
+          failureThreshold: 3
+          timeoutSeconds: 5
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - clamav
+                topologyKey: topology.kubernetes.io/zone
+              weight: 100

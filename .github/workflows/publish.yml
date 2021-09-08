@@ -1,0 +1,64 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Alpine image
+        id: main
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Alpine image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.alpine
+          push: true
+          tags: ${{ steps.main.outputs.tags }}
+          labels: ${{ steps.main.outputs.labels }}
+
+      - name: Extract metadata (tags, labels) for Init DB Alpine image
+        id: initdb
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{raw}}-initdb
+            type=semver,pattern=latest-initdb
+          flavor: |
+            latest=false
+
+      - name: Build and push Init DB Alpine image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.initdb.alpine
+          pull: true
+          push: true
+          tags: ${{ steps.initdb.outputs.tags }}
+          labels: ${{ steps.initdb.outputs.labels }}
