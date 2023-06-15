@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: clamav
-        image: ghcr.io/surt-io/container-clamav:latest
+        image: ghcr.io/pequi-io/container-clamav:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3310
