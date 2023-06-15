@@ -1,5 +1,5 @@
-FROM alpine:3.14
-LABEL maintainer="surt.io"
+FROM alpine:3.18
+LABEL maintainer="pequi.io"
 
 RUN apk add --no-cache clamav clamav-libunrar bash
 
